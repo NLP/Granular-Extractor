@@ -1,0 +1,9 @@
+DROP TABLE IF EXISTS ontology;
+CREATE TABLE ontology (
+  id        INTEGER PRIMARY KEY,
+  subject   TEXT NOT NULL,
+  predicate TEXT NOT NULL,
+  object    TEXT,
+  LOC       TEXT
+);
+
