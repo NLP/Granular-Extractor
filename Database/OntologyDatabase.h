@@ -55,7 +55,7 @@ OntologyDatabase::OntologyDatabase()
         } else { qDebug() << "Debug: Database opened." << endl; }
 }
 
-/// Just testing stuffs
+/// testing InsertionQuery
 void OntologyDatabase::testInsertionQuery(const string& qrStr)
 {
     QSqlQuery    mLiteQr;
