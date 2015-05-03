@@ -37,6 +37,12 @@ public:
     ~OntologyDatabase();
 }; /* -----  end of class OntologyDatabase  ----- */
 
+
+/********************************************************************
+ *                  Class Implementation of OntologyDatabase  *
+ ********************************************************************/
+
+
 /// static declaration and initialization of database
 QSqlDatabase OntologyDatabase::mOntDB = QSqlDatabase::addDatabase("QSQLITE", "ONT_DB");
 
@@ -81,8 +87,9 @@ void OntologyDatabase::QuestionQuery(const string &qrStr, string& result)  /// U
     vector<string> v_result = vectorQuestionQuery (qrStr);
     result = "";
     for(string R : v_result)
-      result += (R + ",");
+      result += (R + ", ");
     /// TODO : Make result neater
+    result = result.substr (0, result.size () - 2); /// Slice last ", "
 }
 
 
@@ -108,6 +115,7 @@ vector<string> OntologyDatabase::vectorQuestionQuery(const string &qrStr)
     while( mLiteQr.next() ) {
          resultList.push_back (mLiteQr.value(0).toString().toStdString());
     }
+    return resultList;
 }
 
 /// Destructor

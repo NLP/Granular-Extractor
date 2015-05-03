@@ -37,14 +37,16 @@ public:
     }
 
     string getQueryOf		(const SyntaxTree& sentence);	/// see implementation for comment
-    string getInsertionQuery(vector<SyntaxWord> WordList);
-    }; /* -----  end of class QueryGenerator  ----- */
+    string getInsertionQuery(const vector<SyntaxWord> &WordList);
+    string getQuestionQuery (const vector<SyntaxWord> &WordList, const SyntaxObject& SObjBeingAsked);
+}; /* -----  end of class QueryGenerator  ----- */
 
-
+/********************************************
+ *  Class Implementation Of QueryGenerator  *
+ ********************************************/
 /**
 * @brief getQueryOf
 * @param sentence : with syntax
-*
 * @note : Ambiguity of sentence type should be taken care of before using
 * 		   This functions
 * @return
@@ -54,13 +56,13 @@ string QueryGenerator::getQueryOf(const SyntaxTree &sentence)
         /// First, determine what kind of sentence a tree has
         switch (sentence.getSentenceType ()) {
         case SentenceType::ST_INVALID:
-            throw unimplemented_exc();
+            throw invalid_sentence();
             break;
         case SentenceType::DECLARATIVE:
             return getInsertionQuery(sentence.getAll());
             break;
         case SentenceType::INTERROGATIVE:
-            throw unimplemented_exc();
+            return getQuestionQuery (sentence.getAll (), sentence.askingFor ());
             break;
         case SentenceType::IMPERATIVE:
             throw unimplemented_exc();
@@ -77,15 +79,13 @@ string QueryGenerator::getQueryOf(const SyntaxTree &sentence)
 *  @note here's where conversion to sql language takes place
 * @return string of SQLite command
 */
-string QueryGenerator::getInsertionQuery(vector<SyntaxWord> WordList)
+string QueryGenerator::getInsertionQuery(const vector<SyntaxWord>& WordList)
 {
     set<SyntaxObject> SPO; // SPO components to put on table
     string columnToFill;
     string  valueToFill;
 
-    // NOTE: DEBUG first
-    cout << "Debug getInertionQuery\n";
-    for(SyntaxWord w : WordList)
+    for(SyntaxWord const& w : WordList)
     {
         switch (w.getSyntax ()) {
         case SyntaxObject::SUBJECT:
@@ -112,6 +112,32 @@ string QueryGenerator::getInsertionQuery(vector<SyntaxWord> WordList)
     return result;
 }
 
+/**
+ * @brief QueryGenerator::getQuestionQuery
+ * 		From a structure of wordlist, generate valid query.
+ * @param WordList
+ * @return
+ */
+string QueryGenerator::getQuestionQuery(const vector<SyntaxWord> &WordList, const SyntaxObject &SObjBeingAsked)
+{
+    cout << "--DEBUG" << endl;
+    cout << "syntax encoding : " << SyntaxTree::getSyntaxEncoding (WordList) << endl;
+    cout << "Being asked : " << syntaxStrEncoding[SObjBeingAsked] << endl;
+
+    /// depending on what being asked, produce a query
+    string query = "SELECT " + syntaxDBLookUp[SObjBeingAsked] + " FROM ontology WHERE ";
+    for(SyntaxWord const& sw : WordList) {
+        if(sw.getSyntax () != SObjBeingAsked && sw.getSyntax () != S_INVALID) {
+            query += syntaxDBLookUp[sw.getSyntax()] + " = ";
+            query += ("'" + sw.getWord ().getTokenString () + "'");
+            query += " AND ";
+        }
+    }
+    query = query.substr (0, query.size () - 5);		/// Chop the last " AND "
+//    cout << "DEBUG" << endl;
+//    cout << "question query : " << query << endl;
+    return query;
+}
 
 
 
