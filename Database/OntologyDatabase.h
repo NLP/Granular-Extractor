@@ -39,7 +39,7 @@ public:
     ~OntologyDatabase();
 }; /* -----  end of class OntologyDatabase  ----- */
 
-QSqlDatabase OntologyDatabase::mOntDB = QSqlDatabase::addDatabase("QSQLITE");
+QSqlDatabase OntologyDatabase::mOntDB = QSqlDatabase::addDatabase("QSQLITE", "ONT_DB");
 
 /**
  * @brief OntologyDatabase::OntologyDatabase
@@ -58,7 +58,7 @@ OntologyDatabase::OntologyDatabase()
 /// testing InsertionQuery
 void OntologyDatabase::testInsertionQuery(const string& qrStr)
 {
-    QSqlQuery    mLiteQr;
+    QSqlQuery    mLiteQr(this->mOntDB);
     mLiteQr.prepare (qrStr.c_str ());
     mLiteQr.prepare(qrStr.c_str());
     if( !mLiteQr.exec() ) {
