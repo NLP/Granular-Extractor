@@ -36,7 +36,7 @@ public:
         mInsertHeader = "INSERT INTO ontology ";
     }
 
-    string getQueryOf		(const SyntaxTree& sentence);
+    string getQueryOf		(const SyntaxTree& sentence);	/// see implementation for comment
     string getInsertionQuery(vector<SyntaxWord> WordList);
     }; /* -----  end of class QueryGenerator  ----- */
 

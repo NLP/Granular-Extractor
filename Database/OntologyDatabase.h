@@ -27,18 +27,17 @@ class OntologyDatabase
 {
 private:
     static QSqlDatabase mOntDB;
+    vector<string> vectorQuestionQuery(const string &qrStr);   /// lower function
 
 public:
     OntologyDatabase();
-
-    /// TODO : make interface for insertion queries (EASY)
-    void testInsertionQuery(const string &qrStr);
-
-    /// TODO : make interface for request queries (HARD)
+    void InsertionQuery(const string &qrStr);
+    void QuestionQuery (const string &qrStr, string& result);  /// Upper function
 
     ~OntologyDatabase();
 }; /* -----  end of class OntologyDatabase  ----- */
 
+/// static declaration and initialization of database
 QSqlDatabase OntologyDatabase::mOntDB = QSqlDatabase::addDatabase("QSQLITE", "ONT_DB");
 
 /**
@@ -55,15 +54,59 @@ OntologyDatabase::OntologyDatabase()
         } else { qDebug() << "Debug: Database opened." << endl; }
 }
 
-/// testing InsertionQuery
-void OntologyDatabase::testInsertionQuery(const string& qrStr)
+/**
+ * @brief OntologyDatabase::InsertionQuery
+ * 		Given a string that is a valid SQLite form
+ * 		The function will proceed with insertion to database
+ * @param qrStr
+ */
+void OntologyDatabase::InsertionQuery(const string& qrStr)
 {
     QSqlQuery    mLiteQr(this->mOntDB);
-    mLiteQr.prepare (qrStr.c_str ());
     mLiteQr.prepare(qrStr.c_str());
     if( !mLiteQr.exec() ) {
         qDebug() << mLiteQr.lastError();
         throw std::invalid_argument("Invalid query.");
+    }
+}
+
+/**
+ * @brief QuestionQuery
+ *
+ * @param qrStr		: query commands
+ * @param result    : reply
+ */
+void OntologyDatabase::QuestionQuery(const string &qrStr, string& result)  /// Upper function
+{
+    vector<string> v_result = vectorQuestionQuery (qrStr);
+    result = "";
+    for(string R : v_result)
+      result += (R + ",");
+    /// TODO : Make result neater
+}
+
+
+/**
+ * @brief ValueQuestionQuery
+ * 	Given a string of valid SQLite query, the function will
+ *  populate a vector with a result from the query
+ *
+ * @param qrStr
+ * @return
+ */
+vector<string> OntologyDatabase::vectorQuestionQuery(const string &qrStr)
+{
+    QSqlQuery	mLiteQr(this->mOntDB);
+    mLiteQr.prepare (qrStr.c_str ());
+    if( !mLiteQr.exec() ) {
+        qDebug() << mLiteQr.lastError();
+        throw std::invalid_argument("Invalid query.");
+    }
+
+    vector<string> resultList;
+    /// Extracting process
+    while( mLiteQr.next() ) {
+         resultList.push_back (mLiteQr.value(0).toString().toStdString());
     }
 }
 
