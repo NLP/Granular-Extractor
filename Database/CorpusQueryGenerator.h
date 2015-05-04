@@ -128,14 +128,13 @@ string QueryGenerator::getQuestionQuery(const vector<SyntaxWord> &WordList, cons
     string query = "SELECT " + syntaxDBLookUp[SObjBeingAsked] + " FROM ontology WHERE ";
     for(SyntaxWord const& sw : WordList) {
         if(sw.getSyntax () != SObjBeingAsked && sw.getSyntax () != S_INVALID) {
-            query += syntaxDBLookUp[sw.getSyntax()] + " = ";
-            query += ("'" + sw.getWord ().getTokenString () + "'");
+            query += syntaxDBLookUp[sw.getSyntax()] + " LIKE ";
+            query += ("'" + sw.getWord ().getTokenString () + "%'");
             query += " AND ";
         }
     }
     query = query.substr (0, query.size () - 5);		/// Chop the last " AND "
-//    cout << "DEBUG" << endl;
-//    cout << "question query : " << query << endl;
+//    cout << " DEBUG : query : " << query << endl;
     return query;
 }
 
