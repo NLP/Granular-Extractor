@@ -57,7 +57,8 @@ OntologyDatabase::OntologyDatabase()
             qDebug() << mOntDB.lastError();
             qFatal( "Failed to connect to database." );
             throw std::invalid_argument("Error: Invalid database");
-        } else { qDebug() << "Debug: Database opened." << endl; }
+        }
+//        else { qDebug() << "Debug: Database opened." << endl; }
 }
 
 /**

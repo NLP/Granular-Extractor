@@ -92,6 +92,7 @@ string QueryGenerator::getInsertionQuery(const vector<SyntaxWord>& WordList)
         case SyntaxObject::MAINVERB:
         case SyntaxObject::INDIRECTOBJ:
         case SyntaxObject::DIRECTOBJ:
+//        case SyntaxObject::ATTRIBUTE:  // Should be adjective
             columnToFill += syntaxDBLookUp[w.getSyntax ()];
             columnToFill += ",";
             valueToFill += "'";
@@ -104,9 +105,6 @@ string QueryGenerator::getInsertionQuery(const vector<SyntaxWord>& WordList)
     }
     columnToFill = columnToFill.substr (0, columnToFill.size () - 1);
     valueToFill = valueToFill.	substr (0, valueToFill.size () - 1);
-//    cout << "DEBUG : AFTER analysis\n";
-//    cout << "column : " << columnToFill << endl;
-//    cout << "value  : " << valueToFill << endl;
     string result = mInsertHeader + "(" + columnToFill + ")" + " VALUES ("
             + valueToFill + ");";
     return result;
@@ -120,9 +118,9 @@ string QueryGenerator::getInsertionQuery(const vector<SyntaxWord>& WordList)
  */
 string QueryGenerator::getQuestionQuery(const vector<SyntaxWord> &WordList, const SyntaxObject &SObjBeingAsked)
 {
-    cout << "--DEBUG" << endl;
-    cout << "syntax encoding : " << SyntaxTree::getSyntaxEncoding (WordList) << endl;
-    cout << "Being asked : " << syntaxStrEncoding[SObjBeingAsked] << endl;
+//    cout << "--DEBUG" << endl;
+//    cout << "syntax encoding : " << SyntaxTree::getSyntaxEncoding (WordList) << endl;
+//    cout << "Being asked : " << syntaxStrEncoding[SObjBeingAsked] << endl;
 
     /// depending on what being asked, produce a query
     string query = "SELECT " + syntaxDBLookUp[SObjBeingAsked] + " FROM ontology WHERE ";
